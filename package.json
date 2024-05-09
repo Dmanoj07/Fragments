@@ -11,5 +11,8 @@
     "url": "git+https://github.com/Dmanoj07/fragments.git"
   },
   "author": "Manoj Dhami",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "prettier": "3.2.5"
+  }
 }
