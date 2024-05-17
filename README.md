@@ -7,7 +7,7 @@ To run ESLint from the command line, add a lint script to your `package.json` fi
   "lint": "eslint --config eslint.config.mjs \"./src/**/*\.js\""
 }
 
-Starting the Server Automatically
+Starting the Server Automatically:
 Install the nodemon package to automatically restart the server during development
 
 npm install --save-dev nodemon
