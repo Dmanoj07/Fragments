@@ -11,11 +11,13 @@ const router = express.Router();
 // Our authentication middleware
 const { authenticate } = require("../auth");
 const { createSuccessResponse } = require("../response");
+const fragmentRoutes = require("../model/fragment");
 
 /**
  * Expose all of our API routes on /v1/* to include an API version.
  */
 router.use(`/v1`, authenticate(), require("./api"));
+//router.use("/v1/fragments", authenticate(), fragmentRoutes);
 
 /**
  * Define a simple health check route. If the server is running
