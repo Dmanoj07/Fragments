@@ -8,6 +8,7 @@ const {
   listFragments,
   deleteFragment,
 } = require("./data");
+const logger = require("../../src/logger"); // Import the logger module
 
 class Fragment {
   constructor({
@@ -19,12 +20,15 @@ class Fragment {
     size = 0,
   }) {
     if (!ownerId || !type) {
+      logger.error("ownerId and type are required");
       throw new Error("ownerId and type are required");
     }
     if (typeof size !== "number" || size < 0) {
+      logger.error("size must be a non-negative number");
       throw new Error("size must be a non-negative number");
     }
     if (!Fragment.isSupportedType(type)) {
+      logger.warn(`Unsupported type: ${type}`);
       throw new Error(`Unsupported type: ${type}`);
     }
 
@@ -37,41 +41,78 @@ class Fragment {
   }
 
   static async byUser(ownerId, expand = false) {
-    const fragments = await listFragments(ownerId, expand);
-    if (!expand) {
-      return fragments;
+    try {
+      const fragments = await listFragments(ownerId, expand);
+      if (!expand) {
+        return fragments;
+      }
+      return Promise.all(
+        fragments.map(async (fragment) => new Fragment(fragment))
+      );
+    } catch (err) {
+      logger.error(
+        `Error fetching fragments for user ${ownerId}: ${err.message}`
+      );
+      throw err;
     }
-    return Promise.all(
-      fragments.map(async (fragment) => new Fragment(fragment))
-    );
   }
 
   static async byId(ownerId, id) {
-    const fragmentData = await readFragment(ownerId, id);
-    return new Fragment(fragmentData);
+    try {
+      const fragmentData = await readFragment(ownerId, id);
+      return new Fragment(fragmentData);
+    } catch (err) {
+      logger.error(`Error fetching fragment with ID ${id}: ${err.message}`);
+      throw err;
+    }
   }
 
   static delete(ownerId, id) {
-    return deleteFragment(ownerId, id);
+    try {
+      return deleteFragment(ownerId, id);
+    } catch (err) {
+      logger.error(`Error deleting fragment with ID ${id}: ${err.message}`);
+      throw err;
+    }
   }
 
   save() {
-    this.updated = new Date().toISOString(); // Update the `updated` property
-    return writeFragment(this);
+    this.updated = new Date().toISOString();
+    try {
+      return writeFragment(this);
+    } catch (err) {
+      logger.error(`Error saving fragment with ID ${this.id}: ${err.message}`);
+      throw err;
+    }
   }
 
   getData() {
-    return readFragmentData(this.ownerId, this.id);
+    try {
+      return readFragmentData(this.ownerId, this.id);
+    } catch (err) {
+      logger.error(
+        `Error fetching data for fragment with ID ${this.id}: ${err.message}`
+      );
+      throw err;
+    }
   }
 
   async setData(data) {
     if (!Buffer.isBuffer(data)) {
-      throw new Error("data must be a Buffer");
+      logger.error("Data must be a Buffer");
+      throw new Error("Data must be a Buffer");
     }
     this.size = data.length;
     this.updated = new Date().toISOString();
-    await this.save();
-    await writeFragmentData(this.ownerId, this.id, data);
+    try {
+      await this.save();
+      await writeFragmentData(this.ownerId, this.id, data);
+    } catch (err) {
+      logger.error(
+        `Error setting data for fragment with ID ${this.id}: ${err.message}`
+      );
+      throw err;
+    }
   }
 
   get mimeType() {
