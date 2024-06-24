@@ -1,57 +1,53 @@
 ######Dockerfile
 
-# Use node version 18.13.0
-FROM node:18.13.0
+# Build stage
+FROM node:18.13.0 AS build
 
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install all dependencies (including dev dependencies)
+RUN npm ci
+
+# Copy source files
+COPY ./src ./src
+
+
+
+# Production stage
+FROM node:18.13.0-alpine
 
 LABEL maintainer="Manoj Dhami<mdhami7@myseneca.ca>"
 LABEL description="Fragments node.js microservice"
 
-
-
-# We default to use port 8080 in our service
+# Set environment variables
 ENV PORT=8080
-
-# Reduce npm spam when installing within Docker
-# https://docs.npmjs.com/cli/v8/using-npm/config#loglevel
 ENV NPM_CONFIG_LOGLEVEL=warn
-
-# Disable colour when run inside Docker
-# https://docs.npmjs.com/cli/v8/using-npm/config#color
 ENV NPM_CONFIG_COLOR=false
 
-
-# Use /app as our working directory
 WORKDIR /app
 
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
-# Option 1: explicit path - Copy the package.json and package-lock.json
-# files into /app. NOTE: the trailing `/` on `/app/`, which tells Docker
-# that `app` is a directory and not a file.
-COPY package*.json /app/
+# Install only production dependencies
+RUN npm ci --only=production
 
+# Copy built assets from the build stage
+COPY --from=build /app/src ./src
 
-# Install node dependencies defined in package-lock.json
-RUN npm install
-
-# Copy src to /app/src/
-COPY ./src ./src
-
-
-
-# Start the container by running our server
-CMD npm start
-
-
-# We run our service on port 8080
-EXPOSE 8080
-
-
-# Copy src/
-COPY ./src ./src
-
-# Copy our HTPASSWD file
+# Copy .htpasswd file
 COPY ./tests/.htpasswd ./tests/.htpasswd
 
-# Run the server
-CMD npm start
+# Expose the port the app runs on
+EXPOSE 8080
+
+# Command to run the application
+CMD ["npm", "start"]
+
+
+
+
+
