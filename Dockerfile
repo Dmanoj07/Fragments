@@ -14,8 +14,6 @@ RUN npm ci
 # Copy source files
 COPY ./src ./src
 
-
-
 # Production stage
 FROM node:18.13.0-alpine
 
