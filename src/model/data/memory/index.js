@@ -25,16 +25,33 @@ function readFragmentData(ownerId, id) {
 }
 
 // Get a list of fragment ids/objects for the given user from memory db. Returns a Promise
+// async function listFragments(ownerId, expand = false) {
+//   const fragments = await metadata.query(ownerId);
+
+//   // If we don't get anything back, or are supposed to give expanded fragments, return
+//   if (expand || !fragments) {
+//     return fragments;
+//   }
+
+//   // Otherwise, map to only send back the ids
+//   return fragments.map((fragment) => fragment.id);
+// }
+
 async function listFragments(ownerId, expand = false) {
   const fragments = await metadata.query(ownerId);
 
-  // If we don't get anything back, or are supposed to give expanded fragments, return
-  if (expand || !fragments) {
-    return fragments;
+  if (!fragments || fragments.length === 0) {
+    return [];
   }
 
-  // Otherwise, map to only send back the ids
-  return fragments.map((fragment) => fragment.id);
+  if (expand) {
+    return fragments.filter((fragment) => fragment !== null);
+  }
+
+  // Only return the ids of non-null fragments
+  return fragments
+    .filter((fragment) => fragment !== null)
+    .map((fragment) => fragment.id);
 }
 
 // Delete a fragment's metadata and data from memory db. Returns a Promise
@@ -46,7 +63,6 @@ function deleteFragment(ownerId, id) {
     data.del(ownerId, id),
   ]);
 }
-
 
 module.exports = {
   listFragments,

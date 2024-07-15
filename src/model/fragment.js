@@ -40,15 +40,33 @@ class Fragment {
     this.size = size;
   }
 
+  // static async byUser(ownerId, expand = false) {
+  //   try {
+  //     const fragments = await listFragments(ownerId, expand);
+  //     if (!expand) {
+  //       return fragments;
+  //     }
+  //     return Promise.all(
+  //       fragments.map(async (fragmentData) => new Fragment(fragmentData))
+  //     );
+  //   } catch (err) {
+  //     logger.error(
+  //       `Error fetching fragments for user ${ownerId}: ${err.message}`
+  //     );
+  //     throw err;
+  //   }
+  // }
+
   static async byUser(ownerId, expand = false) {
     try {
       const fragments = await listFragments(ownerId, expand);
+      if (fragments.length === 0) {
+        return [];
+      }
       if (!expand) {
         return fragments;
       }
-      return Promise.all(
-        fragments.map(async (fragment) => new Fragment(fragment))
-      );
+      return fragments.map((fragmentData) => new Fragment(fragmentData));
     } catch (err) {
       logger.error(
         `Error fetching fragments for user ${ownerId}: ${err.message}`
@@ -130,7 +148,8 @@ class Fragment {
 
   static isSupportedType(value) {
     const { type } = contentType.parse(value);
-    return type.startsWith("text/");
+    const supportedTypes = ["text/plain", "application/json"];
+    return supportedTypes.includes(type) || type.startsWith("text/");
   }
 }
 

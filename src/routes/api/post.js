@@ -1,6 +1,6 @@
 const contentType = require("content-type");
 const { Fragment } = require("../../model/fragment");
-const logger = require("../../logger"); // Import the logger module
+const logger = require("../../logger");
 const { createErrorResponse } = require("../../response");
 
 module.exports = async (req, res) => {
@@ -11,10 +11,39 @@ module.exports = async (req, res) => {
       throw new Error("Unsupported Content Type");
     }
 
+    if (!Buffer.isBuffer(req.body)) {
+      throw new Error("Invalid body, expected Buffer");
+    }
+
+    if (req.body.length === 0) {
+      throw new Error("Empty fragment body");
+    }
+
+    // Get the JSON data from the request body
+    const fragmentData = req.body.toString("utf-8");
+    //console.log(fragmentData);
+    // Calculate the size of the fragment
+    const fragmentDataBuffer = Buffer.from(fragmentData, "utf-8");
+    //console.log(fragmentDataBuffer);
+    const fragmentSize = Buffer.byteLength(fragmentDataBuffer);
+    //console.log(`Received buffer length: ${req.body.length}`);
+    //console.log(`Received buffer content: ${req.body.toString("utf-8")}`);
+    //console.log(fragmentSize);
+
+    console.log(
+      {
+        ownerId: req.user,
+        type,
+        size: fragmentSize,
+        data: req.body.toString("utf-8").substring(0, 100), // Log first 100 chars
+      },
+      "Creating new fragment"
+    );
+
     const newFragment = new Fragment({
       ownerId: req.user,
       type,
-      size: req.body.length,
+      size: fragmentSize,
     });
 
     await newFragment.save();

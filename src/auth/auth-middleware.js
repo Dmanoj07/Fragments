@@ -16,6 +16,7 @@ module.exports = (strategyName) => {
      * @param {Error} err - an error object
      * @param {string} email - an authenticated user's email address
      */
+
     function callback(err, email) {
       // Something failed, let the the error handling middleware deal with it
       if (err) {
@@ -23,8 +24,22 @@ module.exports = (strategyName) => {
         return next(createErrorResponse(500, "Unable to authenticate user"));
       }
 
+      logger.info(`Authentication strategy: ${strategyName}`);
+      logger.info(`Authorization header: ${req.headers.authorization}`);
+      logger.info({ email }, "Auth result");
+      const authHeader = req.headers.authorization || "";
+      const encodedCredentials = authHeader.split(" ")[1] || "";
+      const decodedCredentials = Buffer.from(
+        encodedCredentials,
+        "base64"
+      ).toString("ascii");
+      logger.info(
+        `Authentication attempt for: ${decodedCredentials.split(":")[0]}`
+      );
+
       // Not authorized, return a 401
       if (!email) {
+        logger.info("Authentication failed - no email returned");
         return res.status(401).json(createErrorResponse(401, "Unauthorized"));
       }
 
