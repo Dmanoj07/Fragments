@@ -26,9 +26,6 @@ module.exports = async (req, res) => {
     const fragmentDataBuffer = Buffer.from(fragmentData, "utf-8");
     //console.log(fragmentDataBuffer);
     const fragmentSize = Buffer.byteLength(fragmentDataBuffer);
-    //console.log(`Received buffer length: ${req.body.length}`);
-    //console.log(`Received buffer content: ${req.body.toString("utf-8")}`);
-    //console.log(fragmentSize);
 
     console.log(
       {

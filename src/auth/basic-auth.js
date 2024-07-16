@@ -7,9 +7,6 @@ const auth = require("http-auth");
 //const passport = require("passport");
 const authPassport = require("http-auth-passport");
 const authorize = require("./auth-middleware");
-//const logger = require("../logger");
-console.log("basic-auth");
-// We expect HTPASSWD_FILE to be defined.
 if (!process.env.HTPASSWD_FILE) {
   throw new Error("missing expected env var: HTPASSWD_FILE");
 }

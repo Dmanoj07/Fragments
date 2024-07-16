@@ -23,10 +23,6 @@ module.exports = (strategyName) => {
         logger.warn({ err }, "error authenticating user");
         return next(createErrorResponse(500, "Unable to authenticate user"));
       }
-
-      logger.info(`Authentication strategy: ${strategyName}`);
-      logger.info(`Authorization header: ${req.headers.authorization}`);
-      logger.info({ email }, "Auth result");
       const authHeader = req.headers.authorization || "";
       const encodedCredentials = authHeader.split(" ")[1] || "";
       const decodedCredentials = Buffer.from(
