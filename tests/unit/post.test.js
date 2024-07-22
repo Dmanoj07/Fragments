@@ -87,7 +87,7 @@ describe("POST /v1/fragments", () => {
     expect(fragment).toHaveProperty("id");
     expect(fragment).toHaveProperty("created");
     expect(fragment).toHaveProperty("type");
-    expect(fragment.type).toBe("text/plain");
+    expect(fragment.type.startsWith("text/plain")).toBe(true);
     expect(fragment).toHaveProperty("size");
     expect(fragment.size).toBe(fragmentData.length);
 
@@ -123,7 +123,7 @@ describe("POST /v1/fragments", () => {
       .auth("user1@email.com", "password1")
       .set("Content-Type", unsupportedType)
       .send("testing");
-    expect(res.status).toEqual(400);
+    expect(res.status).toEqual(415);
     expect(res.body.error.message).toContain("Unsupported Content Type");
   });
 
@@ -138,6 +138,36 @@ describe("POST /v1/fragments", () => {
 
   //   expect(res.status).toEqual(413); // Payload Too Large
   // });
+
+  test("check if content type include charset works", async () => {
+    logger.debug("Test for user creating a plain text fragment");
+    const fragmentData = "Testing";
+    const fragmentDataBuffer = Buffer.from(fragmentData);
+
+    //authenticated users can create a plain text fragment
+    const res = await request(app)
+      .post("/v1/fragments")
+      .auth("user1@email.com", "password1")
+      .set("Content-Type", "text/plain; charset=utf-8")
+      .send(fragmentDataBuffer);
+    expect(res.status).toEqual(201);
+    expect(res.body.status).toBe("ok");
+    logger.info("Test for auth request pass!");
+
+    //responses include all necessary and expected properties (id, created, type, etc), and these values match what you expect for a given request (e.g., size, type, ownerId)
+    const fragment = res.body.fragment;
+    expect(fragment).toHaveProperty("id");
+    expect(fragment).toHaveProperty("created");
+    expect(fragment).toHaveProperty("type");
+    expect(fragment.type.startsWith("text/plain")).toBe(true);
+    expect(fragment).toHaveProperty("size");
+    expect(fragment.size).toBe(fragmentData.length);
+    logger.info("Test for necessary and expected properties pass");
+
+    //POST response includes a Location header with a full URL to GET the created fragment
+    expect(res.headers.location).toBeDefined();
+    logger.info("Test for location header pass!");
+  });
 
   test("empty fragment body is rejected", async () => {
     const res = await request(app)

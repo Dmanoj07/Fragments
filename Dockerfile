@@ -1,7 +1,7 @@
 ######Dockerfile
 
 # Build stage
-FROM node:18.13.0 AS build
+FROM node:18.18.0  AS build
 
 WORKDIR /app
 
@@ -15,7 +15,7 @@ RUN npm ci
 COPY ./src ./src
 
 # Production stage
-FROM node:18.13.0-alpine
+FROM node:18.18.0-alpine
 
 LABEL maintainer="Manoj Dhami<mdhami7@myseneca.ca>"
 LABEL description="Fragments node.js microservice"

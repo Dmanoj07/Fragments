@@ -5,10 +5,17 @@ const { createErrorResponse } = require("../../response");
 
 module.exports = async (req, res) => {
   try {
-    const { type } = contentType.parse(req.headers["content-type"]);
+    const parsedContentType = contentType.parse(req.headers["content-type"]);
+    const type =
+      parsedContentType.type +
+      (parsedContentType.parameters.charset
+        ? `; charset=${parsedContentType.parameters.charset}`
+        : "");
     if (!Fragment.isSupportedType(type)) {
-      logger.warn(`Unsupported content type: ${type}`);
-      throw new Error("Unsupported Content Type");
+      res
+        .status(415)
+        .json(createErrorResponse(415, "Unsupported Content Type"));
+      return;
     }
 
     if (!Buffer.isBuffer(req.body)) {
@@ -25,7 +32,7 @@ module.exports = async (req, res) => {
     // Calculate the size of the fragment
     const fragmentDataBuffer = Buffer.from(fragmentData, "utf-8");
     //console.log(fragmentDataBuffer);
-    const fragmentSize = Buffer.byteLength(fragmentDataBuffer);
+    const fragmentSize = Buffer.byteLength(fragmentData);
 
     console.log(
       {
@@ -48,7 +55,7 @@ module.exports = async (req, res) => {
 
     const baseUrl = process.env.API_URL || `http://${req.headers.host}`;
     const location = new URL(
-      `/fragments/${newFragment.id}`,
+      `v1/fragments/${newFragment.id}`,
       baseUrl
     ).toString();
     res.setHeader("Location", location);
