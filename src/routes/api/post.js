@@ -32,7 +32,7 @@ module.exports = async (req, res) => {
     // Calculate the size of the fragment
     const fragmentDataBuffer = Buffer.from(fragmentData, "utf-8");
     //console.log(fragmentDataBuffer);
-    const fragmentSize = Buffer.byteLength(fragmentData);
+    const fragmentSize = Buffer.byteLength(fragmentDataBuffer);
 
     console.log(
       {
