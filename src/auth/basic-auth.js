@@ -47,6 +47,5 @@ module.exports.strategy = () =>
       file: process.env.HTPASSWD_FILE,
     })
   );
-console.log("HTPASSWD_FILE:", process.env.HTPASSWD_FILE);
 module.exports.authenticate = () =>
   passport.authenticate("http", { session: false });
