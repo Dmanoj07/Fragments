@@ -1,7 +1,7 @@
 ######Dockerfile
 
 # Build stage
-FROM node:18.18.0  AS build
+FROM node:18.18.0 AS build
 
 WORKDIR /app
 
@@ -21,7 +21,7 @@ LABEL maintainer="Manoj Dhami<mdhami7@myseneca.ca>"
 LABEL description="Fragments node.js microservice"
 
 # Set environment variables
-ENV PORT=8080
+ENV PORT=80
 ENV NPM_CONFIG_LOGLEVEL=warn
 ENV NPM_CONFIG_COLOR=false
 
@@ -40,12 +40,7 @@ COPY --from=build /app/src ./src
 COPY ./tests/.htpasswd ./tests/.htpasswd
 
 # Expose the port the app runs on
-EXPOSE 8080
+EXPOSE 80
 
 # Command to run the application
 CMD ["npm", "start"]
-
-
-
-
-
