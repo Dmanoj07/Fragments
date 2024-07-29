@@ -11,6 +11,7 @@ const router = express.Router();
 // Our authentication middleware
 const { authenticate } = require("../auth");
 const { createSuccessResponse } = require("../response");
+const { hostname } = require("os");
 
 /**
  * Expose all of our API routes on /v1/* to include an API version.
@@ -24,19 +25,17 @@ router.use(`/v1`, authenticate(), require("./api"));
  */
 
 router.get("/", (req, res) => {
-  // Clients shouldn't cache this response (always request it fresh)
-  // See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching#controlling_caching
   res.setHeader("Cache-Control", "no-cache");
-
-  // Send a 200 'OK' response with info about our repo
-  const data = {
-    status: "ok",
-    author,
-    // TODO: change this to use your GitHub username!
-    githubUrl: "https://github.com/Dmanoj07/fragments",
-    version,
-  };
-  res.status(200).json(createSuccessResponse(data));
+  res.status(200).json(
+    createSuccessResponse({
+      // TODO: make sure these are changed for your name and repo
+      author: "Manoj Dhami",
+      githubUrl: "https://github.com/Dmanoj07/fragments",
+      version,
+      // Include the hostname in the response
+      hostname: hostname(),
+    })
+  );
 });
 
 module.exports = router;
