@@ -78,6 +78,9 @@ class Fragment {
   static async byId(ownerId, id) {
     try {
       const fragmentData = await readFragment(ownerId, id);
+      if (!fragmentData) {
+        throw new Error(`Unable to find id: ${id}'`);
+      }
       return new Fragment(fragmentData);
     } catch (err) {
       logger.error(`Error fetching fragment with ID ${id}: ${err.message}`);
@@ -123,8 +126,11 @@ class Fragment {
     this.size = data.length;
     this.updated = new Date().toISOString();
     try {
+      logger.debug("Saving fragment metadata...");
       await this.save();
+      logger.debug("Writing fragment data...");
       await writeFragmentData(this.ownerId, this.id, data);
+      logger.debug("Fragment data written successfully");
     } catch (err) {
       logger.error(
         `Error setting data for fragment with ID ${this.id}: ${err.message}`

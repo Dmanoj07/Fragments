@@ -5,7 +5,13 @@ const { createErrorResponse } = require("../../response");
 
 module.exports = async (req, res) => {
   try {
+    console.log("Request body:", req.body);
+    console.log("Content-Type:", req.headers["content-type"]);
+
     const parsedContentType = contentType.parse(req.headers["content-type"]);
+
+    console.log("Parsed Content-Type:", parsedContentType);
+
     const type =
       parsedContentType.type +
       (parsedContentType.parameters.charset
@@ -16,6 +22,18 @@ module.exports = async (req, res) => {
         .status(415)
         .json(createErrorResponse(415, "Unsupported Content Type"));
       return;
+    }
+
+    let fragmentData1, fragmentDataBuffer1;
+
+    if (typeof req.body === "string") {
+      fragmentData1 = req.body;
+      fragmentDataBuffer1 = Buffer.from(fragmentData1);
+    } else if (Buffer.isBuffer(req.body)) {
+      fragmentDataBuffer1 = req.body;
+      fragmentData1 = fragmentDataBuffer1.toString("utf-8");
+    } else {
+      throw new Error("Invalid body, expected string or Buffer");
     }
 
     if (!Buffer.isBuffer(req.body)) {

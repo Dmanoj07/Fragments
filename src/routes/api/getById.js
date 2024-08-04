@@ -10,8 +10,21 @@ module.exports = async (req, res) => {
     const { id } = req.params;
     const ownerId = req.user;
 
-    let fragment = await Fragment.byId(ownerId, id);
+    let fragment;
+    try {
+      fragment = await Fragment.byId(ownerId, id);
+    } catch (error) {
+      // If Fragment.byId throws an error because the fragment wasn't found
+      if (error.message.includes("Unable to find id")) {
+        return res
+          .status(404)
+          .json(createErrorResponse(404, "Fragment not found"));
+      }
+      // If it's any other error, re-throw it to be caught by the outer try-catch
+      throw error;
+    }
 
+    // If Fragment.byId returns null (which it shouldn't based on your implementation, but just in case)
     if (!fragment) {
       return res
         .status(404)
@@ -46,6 +59,12 @@ module.exports = async (req, res) => {
           .json(createErrorResponse(415, "Unsupported conversion"));
       }
     }
+
+    // if (err.message.include("unable to find")) {
+    //   return res
+    //     .status(404)
+    //     .json(createErrorResponse(404, "fragment not found"));
+    // }
 
     res.setHeader("Content-Type", mimeType);
     res.status(200).send(data);

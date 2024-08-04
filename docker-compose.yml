@@ -10,6 +10,7 @@ services:
     build: .
     # Environment variables to use
     environment:
+      - NODE_ENV=development
       # Our API will be running on http://localhost:8080
       - API_URL=http://localhost:8080
       # Use Basic Auth (for running tests, CI)
@@ -27,9 +28,15 @@ services:
       # something else is defined in the env.
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME:-fragments}
       - AWS_DYNAMODB_TABLE_NAME=${AWS_DYNAMODB_TABLE_NAME:-fragments}
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_SESSION_TOKEN=test
     # Ports to publish
     ports:
       - "8080:8080"
+    depends_on:
+      - localstack
+      - dynamodb-local
   # DynamoDB Local, see: https://hub.docker.com/r/amazon/dynamodb-local
   dynamodb-local:
     image: amazon/dynamodb-local

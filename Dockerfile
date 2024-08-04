@@ -21,7 +21,7 @@ LABEL maintainer="Manoj Dhami<mdhami7@myseneca.ca>"
 LABEL description="Fragments node.js microservice"
 
 # Set environment variables
-ENV PORT=80
+ENV PORT=8080
 ENV NPM_CONFIG_LOGLEVEL=warn
 ENV NPM_CONFIG_COLOR=false
 
@@ -40,7 +40,7 @@ COPY --from=build /app/src ./src
 COPY ./tests/.htpasswd ./tests/.htpasswd
 
 # Expose the port the app runs on
-EXPOSE 80
+EXPOSE 8080
 
 # Command to run the application
 CMD ["npm", "start"]
