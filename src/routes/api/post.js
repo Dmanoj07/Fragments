@@ -5,9 +5,6 @@ const { createErrorResponse } = require("../../response");
 
 module.exports = async (req, res) => {
   try {
-    console.log("Request body:", req.body);
-    console.log("Content-Type:", req.headers["content-type"]);
-
     const parsedContentType = contentType.parse(req.headers["content-type"]);
 
     console.log("Parsed Content-Type:", parsedContentType);
@@ -71,11 +68,7 @@ module.exports = async (req, res) => {
     await newFragment.save();
     await newFragment.setData(req.body);
 
-    const baseUrl = process.env.API_URL || `http://${req.headers.host}`;
-    const location = new URL(
-      `v1/fragments/${newFragment.id}`,
-      baseUrl
-    ).toString();
+    const location = `${req.protocol}://${req.get("host")}/v1/fragments/${newFragment.id}`;
     res.setHeader("Location", location);
     res.status(201).json({
       status: "ok",
