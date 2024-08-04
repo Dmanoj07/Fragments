@@ -94,6 +94,7 @@ jobs:
             AWS_COGNITO_CLIENT_ID=4ipe5o5u5mbcqvj8v8ikl1go0d
             API_URL=http://fragments-lb-150105416.us-east-1.elb.amazonaws.com/
             HTPASSWD_FILE=tests/.htpasswd
+            AWS_S3_BUCKET_NAME=mdhami7-fragments
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
