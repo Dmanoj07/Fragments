@@ -95,6 +95,7 @@ jobs:
             API_URL=http://fragments-lb-150105416.us-east-1.elb.amazonaws.com/
             HTPASSWD_FILE=tests/.htpasswd
             AWS_S3_BUCKET_NAME=mdhami7-fragments
+            AWS_DYNAMODB_TABLE_NAME=fragments
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
