@@ -93,6 +93,7 @@ jobs:
         # NOTE: this file needs to be made executable *before* you check into git:
       - name: Make this executable
         run: chmod +x ./scripts/local-aws-setup.sh
+      - name: Run local-aws-setup
         run: ./scripts/local-aws-setup.sh
       - name: Run Hurl Tests
         run: npm run test:integration
