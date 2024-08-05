@@ -10,7 +10,6 @@ module.exports = async (req, res) => {
 
   try {
     let fragments = await Fragment.byUser(ownerId, expand);
-
     res.status(200).json(
       createSuccessResponse({
         fragments,
