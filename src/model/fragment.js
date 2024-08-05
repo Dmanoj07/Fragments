@@ -40,23 +40,6 @@ class Fragment {
     this.size = size;
   }
 
-  // static async byUser(ownerId, expand = false) {
-  //   try {
-  //     const fragments = await listFragments(ownerId, expand);
-  //     if (!expand) {
-  //       return fragments;
-  //     }
-  //     return Promise.all(
-  //       fragments.map(async (fragmentData) => new Fragment(fragmentData))
-  //     );
-  //   } catch (err) {
-  //     logger.error(
-  //       `Error fetching fragments for user ${ownerId}: ${err.message}`
-  //     );
-  //     throw err;
-  //   }
-  // }
-
   static async byUser(ownerId, expand = false) {
     try {
       const fragments = await listFragments(ownerId, expand);
@@ -78,10 +61,14 @@ class Fragment {
   static async byId(ownerId, id) {
     try {
       const fragmentData = await readFragment(ownerId, id);
+      logger.debug(`Fetched fragment data: ${JSON.stringify(fragmentData)}`);
       if (!fragmentData) {
         throw new Error(`Unable to find id: ${id}'`);
       }
-      return new Fragment(fragmentData);
+      const fragment = new Fragment(fragmentData);
+      const data = await fragment.getData();
+      //fragment.size = data.length;
+      return fragment;
     } catch (err) {
       logger.error(`Error fetching fragment with ID ${id}: ${err.message}`);
       throw err;
@@ -123,6 +110,7 @@ class Fragment {
       logger.error("Data must be a Buffer");
       throw new Error("Data must be a Buffer");
     }
+    const trimmedData = data.toString().trim();
     this.size = data.length;
     this.updated = new Date().toISOString();
     try {
@@ -154,7 +142,7 @@ class Fragment {
 
   static isSupportedType(value) {
     const { type } = contentType.parse(value);
-    const supportedTypes = ["text/plain", "application/json"];
+    const supportedTypes = ["text/plain", "text/markdown", "application/json"];
     return supportedTypes.includes(type) || type.startsWith("text/");
   }
 }

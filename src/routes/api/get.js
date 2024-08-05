@@ -11,13 +11,9 @@ module.exports = async (req, res) => {
   try {
     let fragments = await Fragment.byUser(ownerId, expand);
 
-    if (!expand) {
-      fragments = fragments.map((fragment) => fragment.id);
-    }
-
     res.status(200).json(
       createSuccessResponse({
-        fragments: fragments,
+        fragments,
       })
     );
   } catch (error) {
