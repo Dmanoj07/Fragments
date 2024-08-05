@@ -89,7 +89,6 @@ jobs:
         run: npm install
       - name: Build Containers
         run: docker compose up -d
-      - name: Setup Local AWS Resources
         # NOTE: this file needs to be made executable *before* you check into git:
       - name: Make this executable
         run: chmod +x ./scripts/local-aws-setup.sh
