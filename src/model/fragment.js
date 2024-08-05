@@ -66,7 +66,7 @@ class Fragment {
         throw new Error(`Unable to find id: ${id}'`);
       }
       const fragment = new Fragment(fragmentData);
-      const data = await fragment.getData();
+
       //fragment.size = data.length;
       return fragment;
     } catch (err) {
@@ -110,7 +110,6 @@ class Fragment {
       logger.error("Data must be a Buffer");
       throw new Error("Data must be a Buffer");
     }
-    const trimmedData = data.toString().trim();
     this.size = data.length;
     this.updated = new Date().toISOString();
     try {
