@@ -7,9 +7,6 @@ const wait = async (ms = 10) =>
 
 const validTypes = [
   `text/plain`,
-  /*
-   Currently, only text/plain is supported. Others will be added later.
-
   `text/markdown`,
   `text/html`,
   `application/json`,
@@ -17,7 +14,6 @@ const validTypes = [
   `image/jpeg`,
   `image/webp`,
   `image/gif`,
-  */
 ];
 
 describe("Fragment class", () => {

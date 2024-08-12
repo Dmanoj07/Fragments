@@ -28,6 +28,15 @@ module.exports = async (req, res) => {
     logger.error(
       `Error deleting fragment with ID ${fragmentId}: ${error.message}`
     );
-    res.status(500).json(createErrorResponse(500, error.message));
+
+    if (error.message.includes("FragmentNotFound")) {
+      return res
+        .status(404)
+        .json(createErrorResponse(404, "Fragment not found"));
+    }
+
+    return res
+      .status(500)
+      .json(createErrorResponse(500, "Internal Server Error"));
   }
 };

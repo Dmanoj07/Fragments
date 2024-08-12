@@ -63,7 +63,8 @@ class Fragment {
       const fragmentData = await readFragment(ownerId, id);
       logger.debug(`Fetched fragment data: ${JSON.stringify(fragmentData)}`);
       if (!fragmentData) {
-        throw new Error(`Unable to find id: ${id}'`);
+        throw new Error(`FragmentNotFound: Unable to find id: ${id}'`);
+        //throw new Error(`Unable to find id: ${id}'`);
       }
       const fragment = new Fragment(fragmentData);
 
@@ -141,7 +142,16 @@ class Fragment {
 
   static isSupportedType(value) {
     const { type } = contentType.parse(value);
-    const supportedTypes = ["text/plain", "text/markdown", "application/json"];
+    const supportedTypes = [
+      "text/plain",
+      "text/markdown",
+      "text/html",
+      "application/json",
+      "image/png",
+      "image/jpeg",
+      "image/webp",
+      "image/gif",
+    ];
     return supportedTypes.includes(type) || type.startsWith("text/");
   }
 }
