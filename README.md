@@ -1,38 +1,53 @@
-## Running Linters
+## Development Setup
 
-To run ESLint from the command line, add a lint script to your `package.json` file:
+### Running Linters
+
+To run ESLint:
+
+1. Add this script to your `package.json`:
 
 ```json
 "scripts": {
-  "lint": "eslint --config eslint.config.mjs \"./src/**/*\.js\""
+  "lint": "eslint --config eslint.config.mjs \"./src/**/*.js\""
 }
 
-Starting the Server Automatically:
-Install the nodemon package to automatically restart the server during development
+Run the linter with:
 
-npm install --save-dev nodemon
-Then, add the following scripts to your package.json file to start the server:
-
-"scripts": {
+bashCopynpm run lint
+Starting the Server
+Production
+Add this script to package.json:
+jsonCopy"scripts": {
   "start": "node src/server.js"
 }
+Run with:
+bashCopynpm start
+Development
 
-Development and Debugging in Windows
-Install the cross-env package to set environment variables across platforms:
-npm install --save-dev cross-env
+Install nodemon:
 
-Add these scripts to your package.json for development and debugging:
+bashCopynpm install --save-dev nodemon
 
-"scripts": {
+For cross-platform compatibility, install cross-env:
+
+bashCopynpm install --save-dev cross-env
+
+Add these scripts to package.json:
+
+jsonCopy"scripts": {
   "dev": "cross-env LOG_LEVEL=debug nodemon ./src/server.js --watch src",
   "debug": "cross-env LOG_LEVEL=debug nodemon --inspect=0.0.0.0:9229 ./src/server.js --watch src"
 }
 
-Alternatively, if you’re not using cross-env, you can use:
-"scripts": {
+Run the development server:
+
+bashCopynpm run dev
+
+For debugging:
+
+bashCopynpm run debug
+Note: If not using cross-env, replace the scripts with:
+jsonCopy"scripts": {
   "dev": "LOG_LEVEL=debug nodemon ./src/server.js --watch src",
   "debug": "LOG_LEVEL=debug nodemon --inspect=0.0.0.0:9229 ./src/server.js --watch src"
 }
-
-
-```
